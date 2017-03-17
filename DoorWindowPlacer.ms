@@ -23,32 +23,65 @@ macroscript DoorWindowPlacer category: "Montelo Tools"
 		----------------------------------------------------[FUNCTIONS]------------------------------------------
 		---------------------------------------------------------------------------------------------------------------
 		
-		function getDistance &returnPoint &lastPoint:undefined =
+		function isRightClick click =
+		(
+			if (click == #rightClick or click == undefined) then return true;
+			else return false;
+		)
+		
+		function getDistance &returnPoint lastPoint: =
 		(
 			local actualPoint, actualDistance;
 			
 			if classof lastPoint == point3 then
 			(
+				
 				actualPoint = pickPoint snap:#3d rubberband:lastPoint;
+				
+				if ( isRightClick actualPoint ) do return false;
 				
 				actualDistance = distance lastPoint actualPoint;
 				
 				returnPoint = actualPoint;
 				
-				actualDistance;
-			) else (
+				return actualDistance;
+			)
+				
+			if lastPoint == unsupplied then
+			(
 				actualPoint = pickPoint snap:#3d;
+				
+				if ( isRightClick actualPoint ) do return false;
 				
 				getDistance &returnPoint lastPoint:actualPoint;
 			)
-			
 		)
+		
+		
 		
 		function getAngleBetween vector1 vector2 =
 		(
-			local returningAngle = acos( dot(normalize vector1)(normalize vector2) );ing
+			local returningAngle = acos( dot(normalize vector1)(normalize vector2) );
 			
 			returningAngle;
+		)
+		
+		function getThreePoints =
+		(
+			local auxiliarLastPoint;
+			
+			local xyzDistances = #(0, 0, 0);
+			
+			xyzDistances[1] = getDistance &auxiliarLastPoint;
+			
+			for axys = 2 to 3 do
+			(
+				if classof auxiliarLastPoint == #rightClick do return false;
+				
+				xyzDistances[axys] = getDistance &auxiliarLastPoint lastPoint:auxiliarLastPoint;
+			)
+			
+			return xyzDistances;
 		)
 		
 		---------------------------------------------------------------------------------------------------------------
@@ -56,7 +89,14 @@ macroscript DoorWindowPlacer category: "Montelo Tools"
 		---------------------------------------------------------------------------------------------------------------
 		on getDimensionsButton pressed do
 		(
-			local auxiliarLastPoint;
+			
+			local ref = #();
+			
+			ref = getThreePoints();
+			
+			print ref;
+			
+			/*local auxiliarLastPoint;
 			openingLength = getDistance &auxiliarLastPoint;
 			
 			print openingLength;
@@ -67,8 +107,7 @@ macroscript DoorWindowPlacer category: "Montelo Tools"
 			
 			openingHeight = getDistance &auxiliarLastPoint lastPoint:&auxiliarLastPoint;
 			
-			print openingHeight;
-			
+			print openingHeight;*/
 		)
 	)
 	
