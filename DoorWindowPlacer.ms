@@ -89,25 +89,11 @@ macroscript DoorWindowPlacer category: "Montelo Tools"
 		---------------------------------------------------------------------------------------------------------------
 		on getDimensionsButton pressed do
 		(
-			
 			local ref = #();
 			
 			ref = getThreePoints();
 			
 			print ref;
-			
-			/*local auxiliarLastPoint;
-			openingLength = getDistance &auxiliarLastPoint;
-			
-			print openingLength;
-			
-			openingWidth = getDistance &auxiliarLastPoint lastPoint:&auxiliarLastPoint;
-			
-			print openingWidth;
-			
-			openingHeight = getDistance &auxiliarLastPoint lastPoint:&auxiliarLastPoint;
-			
-			print openingHeight;*/
 		)
 	)
 	
