@@ -44,6 +44,13 @@ macroscript DoorWindowPlacer category: "Montelo Tools"
 			
 		)
 		
+		function getAngleBetween vector1 vector2 =
+		(
+			local returningAngle = acos( dot(normalize vector1)(normalize vector2) );ing
+			
+			returningAngle;
+		)
+		
 		---------------------------------------------------------------------------------------------------------------
 		----------------------------------------------------[CALLBACKS]--------------------------------------------
 		---------------------------------------------------------------------------------------------------------------
@@ -62,21 +69,9 @@ macroscript DoorWindowPlacer category: "Montelo Tools"
 			
 			print openingHeight;
 			
-			/*local lastPoint, actualPoint;
-			
-			lastPoint = pickPoint snap:#3d;
-			
-			if classof lastPoint == point3 do
-			(
-				actualPoint = pickPoint snap:#3d rubberband:lastPoint;
-			)
-			
-			openingLength = distance actualPoint lastPoint;
-			
-			print openingLength;*/
 		)
 	)
 	
-	CreateDialog DoorWindowPlacerDialog 218 320 0 224;
+	CreateDialog DoorWindowPlacerDialog 218 320 500 224;
 
 )
