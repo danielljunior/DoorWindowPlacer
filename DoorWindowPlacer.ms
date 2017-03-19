@@ -5,7 +5,7 @@ macroscript DoorWindowPlacer category: "Montelo Tools"
 	Rollout DoorWindowPlacerDialog "Door/Window Placer"
 	(
 		---------------------------------------------------------------------------------------------------------------
-		--------------------------------------------------[INTERFACE]---------------------------------------------
+		----------------------------------------------------[INTERFACE]------------------------------------------------
 		---------------------------------------------------------------------------------------------------------------
 		
 		group "Object Selection" 
@@ -14,13 +14,13 @@ macroscript DoorWindowPlacer category: "Montelo Tools"
 		)
 		
 		---------------------------------------------------------------------------------------------------------------
-		----------------------------------------------------[VARIABLES]--------------------------------------------
+		----------------------------------------------------[VARIABLES]------------------------------------------------
 		---------------------------------------------------------------------------------------------------------------
 		
 		local openingLength, openingWidth, openingHeight;
 		
 		---------------------------------------------------------------------------------------------------------------
-		----------------------------------------------------[FUNCTIONS]------------------------------------------
+		----------------------------------------------------[FUNCTIONS]------------------------------------------------
 		---------------------------------------------------------------------------------------------------------------
 		
 		function isRightClick click =
@@ -29,7 +29,31 @@ macroscript DoorWindowPlacer category: "Montelo Tools"
 			else return false;
 		)
 		
-		function getDistance &returnPoint lastPoint: =
+		function getAngleBetween vector1 vector2 =
+		(
+			local returningAngle = acos( dot(normalize vector1)(normalize vector2) );
+			
+			returningAngle;
+		)
+		
+		function getLineAxisRotation axis pointCoordinate1 pointCoordinate2=
+		(
+			local groundedVector, answerAngle;
+			
+			local isSecondYGreater = pointCoordinate1.y < pointCoordinate2.y;
+			
+			groundedVector = pointCoordinate1 - pointCoordinate2;
+			
+			answerAngle = (getAngleBetween [1,0,0] groundedVector);
+			
+			if isSecondYGreater do answerAngle = -answerAngle;
+				
+			answerAngle;
+		)
+		
+		
+		
+		function getMeasure &returnPoint &returnAngle lastPoint: =
 		(
 			local actualPoint, actualDistance;
 			
@@ -44,6 +68,10 @@ macroscript DoorWindowPlacer category: "Montelo Tools"
 				
 				returnPoint = actualPoint;
 				
+				returnAngle = getZWorldAngle actualPoint lastPoint;
+				
+				--returnAngle = getAngleBetween [1,0,0] (actualPoint-lastPoint);
+				
 				return actualDistance;
 			)
 				
@@ -53,35 +81,28 @@ macroscript DoorWindowPlacer category: "Montelo Tools"
 				
 				if ( isRightClick actualPoint ) do return false;
 				
-				getDistance &returnPoint lastPoint:actualPoint;
+				getMeasure &returnPoint &returnAngle lastPoint:actualPoint;
 			)
 		)
 		
-		
-		
-		function getAngleBetween vector1 vector2 =
-		(
-			local returningAngle = acos( dot(normalize vector1)(normalize vector2) );
-			
-			returningAngle;
-		)
-		
-		function getThreePoints =
+		function getThreeMeasures =
 		(
 			local auxiliarLastPoint;
 			
-			local xyzDistances = #(0, 0, 0);
+			local mountingMeasures = #(0, 0, 0, 0);
 			
-			xyzDistances[1] = getDistance &auxiliarLastPoint;
+			mountingMeasures[1] = getMeasure &auxiliarLastPoint;
 			
-			for axys = 2 to 3 do
+			for axis = 2 to 3 do
 			(
 				if classof auxiliarLastPoint == #rightClick do return false;
 				
-				xyzDistances[axys] = getDistance &auxiliarLastPoint lastPoint:auxiliarLastPoint;
+				mountingMeasures[axis] = getMeasure &auxiliarLastPoint lastPoint:auxiliarLastPoint;
 			)
 			
-			return xyzDistances;
+			--mountingMeasures[4] = getAngleBetween 
+			
+			return mountingMeasures;
 		)
 		
 		---------------------------------------------------------------------------------------------------------------
@@ -89,11 +110,11 @@ macroscript DoorWindowPlacer category: "Montelo Tools"
 		---------------------------------------------------------------------------------------------------------------
 		on getDimensionsButton pressed do
 		(
-			local ref = #();
+			local ref, ang, auxpt;
 			
-			ref = getThreePoints();
+			ref = getMeasure &auxpt &ang;
 			
-			print ref;
+			print ang;
 		)
 	)
 	
