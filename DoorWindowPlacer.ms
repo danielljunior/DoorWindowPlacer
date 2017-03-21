@@ -18,6 +18,10 @@ macroscript DoorWindowPlacer category: "Montelo Tools"
 		---------------------------------------------------------------------------------------------------------------
 		
 		local openingLength, openingWidth, openingHeight;
+		local axisX = 1;
+		local axisY = 2;
+		local axisZ = 3;
+		local axis = #(x_axis, y_axis, z_axis);
 		
 		---------------------------------------------------------------------------------------------------------------
 		----------------------------------------------------[FUNCTIONS]------------------------------------------------
@@ -29,6 +33,8 @@ macroscript DoorWindowPlacer category: "Montelo Tools"
 			else return false;
 		)
 		
+		
+		
 		function getAngleBetween vector1 vector2 =
 		(
 			local returningAngle = acos( dot(normalize vector1)(normalize vector2) );
@@ -36,9 +42,16 @@ macroscript DoorWindowPlacer category: "Montelo Tools"
 			returningAngle;
 		)
 		
+		
+		
 		function getLineAxisRotation axis pointCoordinate1 pointCoordinate2=
 		(
 			local groundedVector, answerAngle;
+			
+			/*for index = 0 to 2 do
+			(
+				
+			)*/
 			
 			if axis == x_axis do
 			(
@@ -61,8 +74,6 @@ macroscript DoorWindowPlacer category: "Montelo Tools"
 			if axis == z_axis do
 			(
 				groundedVector = pointCoordinate2 - pointCoordinate1;
-				
-				groundedVector.z = 0;
 				
 				answerAngle = getAngleBetween x_axis groundedVector;
 				
@@ -131,7 +142,7 @@ macroscript DoorWindowPlacer category: "Montelo Tools"
 		(
 			local ref, ang, auxpt;
 			
-			ref = getMeasure returnPoint:&auxpt rotationAxis:y_axis returnAngle:&ang;
+			ref = getMeasure returnPoint:&auxpt rotationAxis:z_axis returnAngle:&ang;
 			
 			print ang;
 		)
