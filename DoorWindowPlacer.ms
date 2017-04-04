@@ -74,18 +74,16 @@ macroscript DoorWindowPlacer category: "Montelo Tools"
 		
 		function getPivotPoint initialPoint measures =
 		(
-			measures[1] = measures[1] * measures[4][1];
-			measures[2] = measures[2] * measures[4][2];
-			measures[3] = measures[3] * measures[4][3];
+			pivotPoint = measures[1]*(measures[4][1]/2) + measures[2]*(measures[4][2]/2) + initialPoint;
 			
-			
+			return pivotPoint;
 		)
 		
 		function getThreeMeasures =
 		(
 			local auxiliarLastPoint, auxiliarVector, pivotPoint, auxiliarMeasure;
 			
-			local mountingMeasures = #([0,0,0], [0,0,0], [0,0,0], [0,0,0]);
+			local mountingMeasures = #([0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0]);
 			
 			mountingMeasures[4][2] = getMeasure returnPoint:&auxiliarLastPoint returnVector:&auxiliarVector;
 				
@@ -102,6 +100,8 @@ macroscript DoorWindowPlacer category: "Montelo Tools"
 			mountingMeasures[3] = normalize (auxiliarVector);
 			
 			pivotPoint = getPivotPoint pivotPoint mountingMeasures;
+			
+			mountingMeasures[5] = pivotPoint;
 			
 			return mountingMeasures;
 		)
