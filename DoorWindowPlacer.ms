@@ -42,50 +42,7 @@ macroscript DoorWindowPlacer category: "Montelo Tools"
 			returningAngle;
 		)
 		
-		
-		
-		function getLineAxisRotation axis pointCoordinate1 pointCoordinate2=
-		(
-			local groundedVector, answerAngle;
-			
-			/*for index = 0 to 2 do
-			(
-				
-			)*/
-			
-			if axis == x_axis do
-			(
-				groundedVector = pointCoordinate1 - pointCoordinate2;
-				
-				answerAngle = getAngleBetween y_axis groundedVector;
-				
-				if pointCoordinate1.z > pointCoordinate2.z do answerAngle = -answerAngle;
-			)
-			
-			if axis == y_axis do
-			(
-				groundedVector = pointCoordinate2 - pointCoordinate1;
-				
-				answerAngle = getAngleBetween z_axis groundedVector;
-				
-				if pointCoordinate1.x > pointCoordinate2.x do answerAngle = -answerAngle;
-			)
-			
-			if axis == z_axis do
-			(
-				groundedVector = pointCoordinate2 - pointCoordinate1;
-				
-				answerAngle = getAngleBetween x_axis groundedVector;
-				
-				if pointCoordinate1.y > pointCoordinate2.y do answerAngle = -answerAngle;
-			)
-			
-			return answerAngle;
-		)
-		
-		
-		
-		function getMeasure returnPoint: rotationAxis: returnAngle: lastPoint: =
+		function getMeasure returnPoint: lastPoint: returnVector: =
 		(
 			local actualPoint, actualDistance;
 			
@@ -100,7 +57,7 @@ macroscript DoorWindowPlacer category: "Montelo Tools"
 				
 				*returnPoint = actualPoint;
 				
-				*returnAngle = getLineAxisRotation rotationAxis lastPoint actualPoint;
+				*returnVector = actualPoint - lastPoint;
 				
 				return actualDistance;
 			)
@@ -111,26 +68,40 @@ macroscript DoorWindowPlacer category: "Montelo Tools"
 				
 				if ( isRightClick actualPoint ) do return false;
 				
-				getMeasure returnPoint:returnPoint rotationAxis:rotationAxis returnAngle:returnAngle lastPoint:actualPoint;
+				getMeasure returnPoint:returnPoint lastPoint:actualPoint returnVector:returnVector;
 			)
+		)
+		
+		function getPivotPoint initialPoint measures =
+		(
+			measures[1] = measures[1] * measures[4][1];
+			measures[2] = measures[2] * measures[4][2];
+			measures[3] = measures[3] * measures[4][3];
+			
+			
 		)
 		
 		function getThreeMeasures =
 		(
-			local auxiliarLastPoint;
+			local auxiliarLastPoint, auxiliarVector, pivotPoint, auxiliarMeasure;
 			
-			local mountingMeasures = #(0, 0, 0, 0);
+			local mountingMeasures = #([0,0,0], [0,0,0], [0,0,0], [0,0,0]);
 			
-			mountingMeasures[1] = getMeasure &auxiliarLastPoint;
-			
-			for axis = 2 to 3 do
-			(
-				if classof auxiliarLastPoint == #rightClick do return false;
+			mountingMeasures[4][2] = getMeasure returnPoint:&auxiliarLastPoint returnVector:&auxiliarVector;
 				
-				mountingMeasures[axis] = getMeasure &auxiliarLastPoint lastPoint:auxiliarLastPoint;
-			)
+			mountingMeasures[2] = -normalize (auxiliarVector);
 			
-			--mountingMeasures[4] = getAngleBetween 
+			pivotPoint = auxiliarLastPoint;
+			
+			mountingMeasures[4][1] = getMeasure returnPoint:&auxiliarLastPoint lastPoint:auxiliarLastPoint returnVector:&auxiliarVector;
+				
+			mountingMeasures[1] = normalize (auxiliarVector);
+			
+			mountingMeasures[4][3] = getMeasure returnPoint:&auxiliarLastPoint lastPoint:auxiliarLastPoint returnVector:&auxiliarVector;
+				
+			mountingMeasures[3] = normalize (auxiliarVector);
+			
+			pivotPoint = getPivotPoint pivotPoint mountingMeasures;
 			
 			return mountingMeasures;
 		)
@@ -142,9 +113,9 @@ macroscript DoorWindowPlacer category: "Montelo Tools"
 		(
 			local ref, ang, auxpt;
 			
-			ref = getMeasure returnPoint:&auxpt rotationAxis:z_axis returnAngle:&ang;
+			ref = getThreeMeasures();
 			
-			print ang;
+			print ref;
 		)
 	)
 	
