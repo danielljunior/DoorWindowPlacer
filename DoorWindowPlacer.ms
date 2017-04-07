@@ -4,18 +4,18 @@ macroscript DoorWindowPlacer category: "Montelo Tools"
 (
 	Rollout DoorWindowPlacerDialog "Door/Window Placer"
 	(
-		---------------------------------------------------------------------------------------------------------------
-		----------------------------------------------------[INTERFACE]------------------------------------------------
-		---------------------------------------------------------------------------------------------------------------
+		-----------------------------------------------------------------------------------------------------------------------------------
+		--------------------------------------------------------------[INTERFACE]----------------------------------------------------------
+		-----------------------------------------------------------------------------------------------------------------------------------
 		
 		group "Object Selection" 
 		(
 			button getDimensionsButton "Get Dimensions" height:35 width:200;
 		)
 		
-		---------------------------------------------------------------------------------------------------------------
-		----------------------------------------------------[VARIABLES]------------------------------------------------
-		---------------------------------------------------------------------------------------------------------------
+		-----------------------------------------------------------------------------------------------------------------------------------
+		--------------------------------------------------------------[VARIABLES]----------------------------------------------------------
+		-----------------------------------------------------------------------------------------------------------------------------------
 		
 		local openingLength, openingWidth, openingHeight;
 		local axisX = 1;
@@ -23,9 +23,9 @@ macroscript DoorWindowPlacer category: "Montelo Tools"
 		local axisZ = 3;
 		local axis = #(x_axis, y_axis, z_axis);
 		
-		---------------------------------------------------------------------------------------------------------------
-		----------------------------------------------------[FUNCTIONS]------------------------------------------------
-		---------------------------------------------------------------------------------------------------------------
+		-----------------------------------------------------------------------------------------------------------------------------------
+		--------------------------------------------------------------[FUNCTIONS]----------------------------------------------------------
+		-----------------------------------------------------------------------------------------------------------------------------------
 		
 		function isRightClick click =
 		(
@@ -55,9 +55,9 @@ macroscript DoorWindowPlacer category: "Montelo Tools"
 				
 				actualDistance = distance lastPoint actualPoint;
 				
-				*returnPoint = actualPoint;
+				if (returnpoint != unsupplied) do *returnPoint = actualPoint;
 				
-				*returnVector = actualPoint - lastPoint;
+				if (returnVector != unsupplied ) do *returnVector = normalize (actualPoint - lastPoint);
 				
 				return actualDistance;
 			)
@@ -74,7 +74,7 @@ macroscript DoorWindowPlacer category: "Montelo Tools"
 		
 		function getPivotPoint initialPoint measures =
 		(
-			pivotPoint = measures[1]*(measures[4][1]/2) + measures[2]*(measures[4][2]/2) + initialPoint;
+			pivotPoint = (measures[1]*(measures[4][2]/2)) + (measures[2]*(measures[4][1]/2)) + initialPoint;
 			
 			return pivotPoint;
 		)
@@ -85,19 +85,19 @@ macroscript DoorWindowPlacer category: "Montelo Tools"
 			
 			local mountingMeasures = #([0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0]);
 			
-			mountingMeasures[4][2] = getMeasure returnPoint:&auxiliarLastPoint returnVector:&auxiliarVector;
-				
-			mountingMeasures[2] = -normalize (auxiliarVector);
+			mountingMeasures[4][1] = getMeasure returnPoint: &auxiliarLastPoint returnVector:&auxiliarVector;
+			
+			mountingMeasures[2] = -auxiliarVector;
 			
 			pivotPoint = auxiliarLastPoint;
 			
-			mountingMeasures[4][1] = getMeasure returnPoint:&auxiliarLastPoint lastPoint:auxiliarLastPoint returnVector:&auxiliarVector;
-				
-			mountingMeasures[1] = normalize (auxiliarVector);
+			mountingMeasures[4][2] = getMeasure returnPoint: &auxiliarLastPoint lastPoint:auxiliarLastPoint returnVector:&auxiliarVector;
 			
-			mountingMeasures[4][3] = getMeasure returnPoint:&auxiliarLastPoint lastPoint:auxiliarLastPoint returnVector:&auxiliarVector;
-				
-			mountingMeasures[3] = normalize (auxiliarVector);
+			mountingMeasures[1] = auxiliarVector;
+			
+			mountingMeasures[4][3] = getMeasure returnPoint: &auxiliarLastPoint lastPoint:auxiliarLastPoint returnVector:&auxiliarVector;
+			
+			mountingMeasures[3] = auxiliarVector;
 			
 			pivotPoint = getPivotPoint pivotPoint mountingMeasures;
 			
@@ -106,19 +106,30 @@ macroscript DoorWindowPlacer category: "Montelo Tools"
 			return mountingMeasures;
 		)
 		
-		---------------------------------------------------------------------------------------------------------------
-		----------------------------------------------------[CALLBACKS]--------------------------------------------
-		---------------------------------------------------------------------------------------------------------------
+		-----------------------------------------------------------------------------------------------------------------------------------
+		--------------------------------------------------------------[CALLBACKS]----------------------------------------------------------
+		-----------------------------------------------------------------------------------------------------------------------------------
+		
 		on getDimensionsButton pressed do
 		(
-			local ref, ang, auxpt;
+			local mountingMeasures = getThreeMeasures();
 			
-			ref = getThreeMeasures();
+			print mountingMeasures;
 			
-			print ref;
+			boxObject = box length: mountingMeasures[4][1] width: mountingMeasures[4][2] height: mountingMeasures[4][3];
+			
+			transformMatrix = matrix3 1;
+			
+			for axis=1 to 3 do transformMatrix[axis] = mountingMeasures[axis];
+			
+			boxObject.transform = transformMatrix;
+			
+			boxObject.pos = mountingMeasures[5];
+			
+			print transformMatrix;
 		)
 	)
 	
-	CreateDialog DoorWindowPlacerDialog 218 320 500 224;
+	CreateDialog DoorWindowPlacerDialog 218 320 555 590;
 
 )
