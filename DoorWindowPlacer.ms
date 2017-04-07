@@ -83,38 +83,35 @@ macroscript DoorWindowPlacer category: "Montelo Tools"
 		(
 			local auxiliarLastPoint, auxiliarVector, pivotPoint, auxiliarMeasure;
 			
-			local mountingMeasures = #([0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0]);
-			
-			mountingMeasures[4][1] = getMeasure returnPoint: &auxiliarLastPoint returnVector:&auxiliarVector;
-			
-			mountingMeasures[2] = -auxiliarVector;
-			
-			pivotPoint = auxiliarLastPoint;
-			
-			mountingMeasures[4][2] = getMeasure returnPoint: &auxiliarLastPoint lastPoint:auxiliarLastPoint returnVector:&auxiliarVector;
-			
-			mountingMeasures[1] = auxiliarVector;
-			
-			mountingMeasures[4][3] = getMeasure returnPoint: &auxiliarLastPoint lastPoint:auxiliarLastPoint returnVector:&auxiliarVector;
-			
-			mountingMeasures[3] = auxiliarVector;
-			
-			pivotPoint = getPivotPoint pivotPoint mountingMeasures;
-			
-			mountingMeasures[5] = pivotPoint;
-			
+			try
+			(
+				local mountingMeasures = #([0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0]);
+				
+				mountingMeasures[4][1] = getMeasure returnPoint: &auxiliarLastPoint returnVector:&auxiliarVector;
+				
+				mountingMeasures[2] = -auxiliarVector;
+				
+				pivotPoint = auxiliarLastPoint;
+				
+				mountingMeasures[4][2] = getMeasure returnPoint: &auxiliarLastPoint lastPoint:auxiliarLastPoint returnVector:&auxiliarVector;
+				
+				mountingMeasures[1] = auxiliarVector;
+				
+				mountingMeasures[4][3] = getMeasure returnPoint: &auxiliarLastPoint lastPoint:auxiliarLastPoint returnVector:&auxiliarVector;
+				
+				mountingMeasures[3] = auxiliarVector;
+				
+				pivotPoint = getPivotPoint pivotPoint mountingMeasures;
+				
+				mountingMeasures[5] = pivotPoint;
+			) catch ( print "Unfinished points"; )
+				
 			return mountingMeasures;
 		)
 		
-		-----------------------------------------------------------------------------------------------------------------------------------
-		--------------------------------------------------------------[CALLBACKS]----------------------------------------------------------
-		-----------------------------------------------------------------------------------------------------------------------------------
-		
-		on getDimensionsButton pressed do
+		function spawnBaseBox =
 		(
 			local mountingMeasures = getThreeMeasures();
-			
-			print mountingMeasures;
 			
 			boxObject = box length: mountingMeasures[4][1] width: mountingMeasures[4][2] height: mountingMeasures[4][3];
 			
@@ -126,7 +123,16 @@ macroscript DoorWindowPlacer category: "Montelo Tools"
 			
 			boxObject.pos = mountingMeasures[5];
 			
-			print transformMatrix;
+			return boxObject;
+		)
+		
+		-----------------------------------------------------------------------------------------------------------------------------------
+		--------------------------------------------------------------[CALLBACKS]----------------------------------------------------------
+		-----------------------------------------------------------------------------------------------------------------------------------
+		
+		on getDimensionsButton pressed do
+		(
+			spawnBaseBox();
 		)
 	)
 	
