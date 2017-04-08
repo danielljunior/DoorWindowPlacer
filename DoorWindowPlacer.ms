@@ -83,36 +83,31 @@ macroscript DoorWindowPlacer category: "Montelo Tools"
 		(
 			local auxiliarLastPoint, auxiliarVector, pivotPoint, auxiliarMeasure;
 			
-			try
-			(
-				local mountingMeasures = #([0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0]);
-				
-				mountingMeasures[4][1] = getMeasure returnPoint: &auxiliarLastPoint returnVector:&auxiliarVector;
-				
-				mountingMeasures[2] = -auxiliarVector;
-				
-				pivotPoint = auxiliarLastPoint;
-				
-				mountingMeasures[4][2] = getMeasure returnPoint: &auxiliarLastPoint lastPoint:auxiliarLastPoint returnVector:&auxiliarVector;
-				
-				mountingMeasures[1] = auxiliarVector;
-				
-				mountingMeasures[4][3] = getMeasure returnPoint: &auxiliarLastPoint lastPoint:auxiliarLastPoint returnVector:&auxiliarVector;
-				
-				mountingMeasures[3] = auxiliarVector;
-				
-				pivotPoint = getPivotPoint pivotPoint mountingMeasures;
-				
-				mountingMeasures[5] = pivotPoint;
-			) catch ( print "Unfinished points"; )
-				
+			local mountingMeasures = #([0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0]);
+			
+			mountingMeasures[4][1] = getMeasure returnPoint: &auxiliarLastPoint returnVector:&auxiliarVector;
+			
+			mountingMeasures[2] = -auxiliarVector;
+			
+			pivotPoint = auxiliarLastPoint;
+			
+			mountingMeasures[4][2] = getMeasure returnPoint: &auxiliarLastPoint lastPoint:auxiliarLastPoint returnVector:&auxiliarVector;
+			
+			mountingMeasures[1] = auxiliarVector;
+			
+			mountingMeasures[4][3] = getMeasure returnPoint: &auxiliarLastPoint lastPoint:auxiliarLastPoint returnVector:&auxiliarVector;
+			
+			mountingMeasures[3] = auxiliarVector;
+			
+			pivotPoint = getPivotPoint pivotPoint mountingMeasures;
+			
+			mountingMeasures[5] = pivotPoint;
+			
 			return mountingMeasures;
 		)
 		
-		function spawnBaseBox =
+		function spawnBaseBox mountingMeasures =
 		(
-			local mountingMeasures = getThreeMeasures();
-			
 			boxObject = box length: mountingMeasures[4][1] width: mountingMeasures[4][2] height: mountingMeasures[4][3];
 			
 			transformMatrix = matrix3 1;
@@ -126,13 +121,22 @@ macroscript DoorWindowPlacer category: "Montelo Tools"
 			return boxObject;
 		)
 		
+		function generateInitialFrame =
+		(
+			local mountingMeasures = getThreeMeasures();
+			
+			boxObject = spawnBaseBox mountingMeasures;
+			
+			return boxObject;
+		)
+		
 		-----------------------------------------------------------------------------------------------------------------------------------
 		--------------------------------------------------------------[CALLBACKS]----------------------------------------------------------
 		-----------------------------------------------------------------------------------------------------------------------------------
 		
 		on getDimensionsButton pressed do
 		(
-			spawnBaseBox();
+			generateInitialFrame();
 		)
 	)
 	
